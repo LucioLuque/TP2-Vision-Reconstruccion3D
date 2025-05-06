@@ -6,18 +6,17 @@ import pickle
 
 def numeric_sort(file_path):
     base = os.path.basename(file_path)
-    match = re.search(r"_(\d+)\.jpg$", base)
+    match = re.search(r"_(\d+)\.\w+$", base)
     return int(match.group(1))
 
-def get_images_path(directory, prefix="calib", print_info=False):
+def get_images_path(directory, prefix="calib", ext="jpg", print_info=False):
     """
     
     """
     if len(prefix) > 0 and prefix[-1] != "_":
         prefix += "_"
-    left_pattern = os.path.join(directory, f"{prefix}left_*.jpg")
-    right_pattern = os.path.join(directory, f"{prefix}right_*.jpg")
-
+    left_pattern = os.path.join(directory, f"{prefix}left_*.{ext}")
+    right_pattern = os.path.join(directory, f"{prefix}right_*.{ext}")
     left_file_names = sorted(glob.glob(left_pattern), key=numeric_sort)
     right_file_names = sorted(glob.glob(right_pattern), key=numeric_sort)
     num_left = len(left_file_names)
