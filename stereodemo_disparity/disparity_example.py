@@ -10,13 +10,12 @@ from stereodemo.methods import Calibration, InputPair, Config
 models_path = Path.home() / ".cache" / "stereodemo" / "models"
 
 
-calibration_file = "recursos/tune_disparity/stereodemo_calibration.json"
+calibration_file = "../datasets/budha_board/stereodemo_calibration.json"
 with open(calibration_file, "r") as f:
     calibration = Calibration.from_json(f.read())
 
-left_image = cv2.imread("recursos/tune_disparity/left_10.jpg")
-right_image = cv2.imread("recursos/tune_disparity/right_10.jpg")
-
+left_image = cv2.imread("../datasets/budha_board/rectified_captures/left_rectified_0.jpg")
+right_image = cv2.imread("../datasets/budha_board/rectified_captures/right_rectified_0.jpg")
 pair = InputPair(left_image, right_image, calibration, "status?")
 config = Config(models_path=models_path)
 

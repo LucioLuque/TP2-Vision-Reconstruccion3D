@@ -73,9 +73,9 @@ def get_points_from_images(left_file_names, right_file_names, checkerboard, chec
 
         # let's improve the found corners
         #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        # NO SE PARA QUE HACE ESTO? creo que queria poner lefft/right_corners??
-        corners_left = cv2.cornerSubPix(left_image, left_corners, (7, 7), (-1,-1), criteria)
-        corners_right = cv2.cornerSubPix(right_image, right_corners, (7, 7), (-1,-1), criteria)
+
+        left_corners = cv2.cornerSubPix(left_image, left_corners, (7, 7), (-1,-1), criteria)
+        right_corners = cv2.cornerSubPix(right_image, right_corners, (7, 7), (-1,-1), criteria)
 
         # acumulo las imagenes
         left_images.append(left_image)

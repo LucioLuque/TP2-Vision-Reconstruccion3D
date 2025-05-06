@@ -13,8 +13,10 @@ def get_images_path(directory, prefix="calib", print_info=False):
     """
     
     """
-    left_pattern = os.path.join(directory, f"{prefix}_left_*.jpg")
-    right_pattern = os.path.join(directory, f"{prefix}_right_*.jpg")
+    if len(prefix) > 0 and prefix[-1] != "_":
+        prefix += "_"
+    left_pattern = os.path.join(directory, f"{prefix}left_*.jpg")
+    right_pattern = os.path.join(directory, f"{prefix}right_*.jpg")
 
     left_file_names = sorted(glob.glob(left_pattern), key=numeric_sort)
     right_file_names = sorted(glob.glob(right_pattern), key=numeric_sort)
