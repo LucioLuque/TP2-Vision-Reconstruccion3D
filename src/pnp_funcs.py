@@ -1,11 +1,35 @@
 import cv2
 import numpy as np
-
-from calib_funcs import load_checkerboard_config, board_points, detect_board, draw_checkerboard
+from calibration_funcs import load_checkerboard_config, board_points, detect_board, draw_checkerboard
 from i308_utils import show_images
+from typing import List
 
-def get_matrixs(left_imgs, calibration_results, checkerboard_path, print_info = False, show_boards=False):
-    o_T_c_list = []
+def get_poses(left_imgs: List[np.ndarray], calibration_results: dict,
+            checkerboard_path: str, print_info: bool = False, show_boards: bool = False) -> List[np.ndarray]:
+    """
+    Get the poses of the left images.
+    Function provided by professors of course I308.
+    ----------
+    Parameters:
+        - left_imgs (List[np.ndarray]): List of left images.
+        - calibration_results (dict): Calibration results.
+            - left_K (np.ndarray): Left camera intrinsic matrix.
+            - left_dist (np.ndarray): Left camera distortion coefficients.
+            - right_K (np.ndarray): Right camera intrinsic matrix.
+            - right_dist (np.ndarray): Right camera distortion coefficients.
+            - R (np.ndarray): Rotation matrix between the two cameras.
+            - T (np.ndarray): Translation vector between the two cameras.
+            - E (np.ndarray): Essential matrix.
+            - F (np.ndarray): Fundamental matrix.
+            - image_size (Tuple[int, int]): The size of the images.
+        - checkerboard_path (str): Path to the checkerboard configuration file.
+        - print_info (bool): Whether to print the information.
+        - show_boards (bool): Whether to show the boards.
+    ----------
+    Returns:
+        - poses (List[np.ndarray]): List of poses.
+    """
+    poses = []
     for i, left_img in enumerate(left_imgs):
         left_img = left_img.copy() 
         left_img_gray = cv2.cvtColor(left_img, cv2.COLOR_BGR2GRAY)
@@ -21,13 +45,11 @@ def get_matrixs(left_imgs, calibration_results, checkerboard_path, print_info = 
             }
             left_image = draw_checkerboard(left_img, checkerboard, left_corners, True, **draw_settings)
             right_image = draw_checkerboard(left_img, checkerboard, left_corners,  True, **draw_settings)
-            show_images([left_image, right_image])
-
+            show_images([left_image, right_image], ["left", "right"])
 
         object_3dpoints = board_points(checkerboard)
 
         object_3dpoints_mm = object_3dpoints * square_size_mm
-
 
         ret, rvec, tvec = cv2.solvePnP(object_3dpoints_mm,
                                     left_corners,
@@ -38,5 +60,5 @@ def get_matrixs(left_imgs, calibration_results, checkerboard_path, print_info = 
         c_T_o = np.column_stack((c_R_o[0], tvec))
         c_T_o = np.vstack((c_T_o, [0, 0, 0, 1]))
         o_T_c = np.linalg.inv(c_T_o)
-        o_T_c_list.append(o_T_c)
-    return o_T_c_list
+        poses.append(o_T_c)
+    return poses
